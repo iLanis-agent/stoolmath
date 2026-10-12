@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stool math - calculators</title>
+<style>
+  :root { --accent: #2f6b4f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; background: #f5f7f4; color: #262c28; line-height: 1.55; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 20px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; color: var(--accent); }
+  .lede { margin: 0 0 14px; max-width: 640px; }
+  .note { background: #fff; border: 1px solid #d8e0da; border-left: 4px solid var(--accent); border-radius: 6px; padding: 12px 16px; font-size: 0.9rem; margin: 0 0 28px; max-width: 720px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  section { background: #fff; border: 1px solid #d8e0da; border-radius: 8px; padding: 20px 22px; }
+  h2 { font-size: 1.15rem; margin: 0 0 6px; }
+  .hint { font-size: 0.9rem; color: #6e7d74; margin: 0 0 14px; }
+  label { display: block; font-size: 0.9rem; margin: 10px 0 3px; }
+  input { width: 100%; padding: 8px 10px; font-size: 1rem; border: 1px solid #bcc9c1; border-radius: 5px; font-family: inherit; }
+  button { margin-top: 16px; width: 100%; padding: 11px; background: var(--accent); color: #fff; border: 0; border-radius: 6px; font-size: 1rem; cursor: pointer; font-family: inherit; }
+  button:hover { filter: brightness(1.08); }
+  .out { margin-top: 14px; font-size: 1rem; min-height: 1.4em; }
+  .out.err { color: #a32222; }
+  footer { max-width: 1100px; margin: 0 auto; padding: 0 20px 40px; font-size: 0.85rem; color: #a3b0a8; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Stool math</h1>
+  <p class="lede">The counter names the seat, the length names the row, and the seat names the footrest. Exact arithmetic, every borrowed number labeled.</p>
+  <div class="note">Illustrative planning arithmetic only. Every gap, width and drop is a labeled default you can change; bodies and stools vary, so sit on the real stool before buying a row.</div>
+  <div class="grid">
+    <section>
+      <h2>Height plan</h2>
+      <p class="hint">The counter names the seat.</p>
+      <label for="h-c">Counter height (cm)</label>
+      <input id="h-c" type="number" value="90" min="0" step="0.5">
+      <label for="h-l">Labeled knee gap, low (cm)</label>
+      <input id="h-l" type="number" value="25" min="0" step="1">
+      <label for="h-h">Labeled knee gap, high (cm)</label>
+      <input id="h-h" type="number" value="30" min="0" step="1">
+      <button id="h-go">Size the seat</button>
+      <div class="out" id="h-out"></div>
+    </section>
+    <section>
+      <h2>Space plan</h2>
+      <p class="hint">The length names the row.</p>
+      <label for="s-l">Counter length (cm)</label>
+      <input id="s-l" type="number" value="240" min="0" step="1">
+      <label for="s-p">Labeled width a stool (cm)</label>
+      <input id="s-p" type="number" value="60" min="0" step="1">
+      <button id="s-go">Count the row</button>
+      <div class="out" id="s-out"></div>
+    </section>
+    <section>
+      <h2>Footrest plan</h2>
+      <p class="hint">The seat names the footrest.</p>
+      <label for="f-s">Seat height (cm)</label>
+      <input id="f-s" type="number" value="65" min="0" step="0.5">
+      <label for="f-d">Labeled drop below the seat (cm)</label>
+      <input id="f-d" type="number" value="45" min="0" step="1">
+      <button id="f-go">Place the footrest</button>
+      <div class="out" id="f-out"></div>
+    </section>
+  </div>
+</main>
+<footer>Built by the app factory. <a href="index.html">About</a> &middot; <a href="https://github.com/iLanis-agent/stoolmath">Source</a></footer>
+<script src="engine.js"></script>
+<script>
+function num(id){ return parseFloat(document.getElementById(id).value); }
+function show(id, r, render){
+  var el = document.getElementById(id);
+  if (r.error) { el.textContent = r.error; el.classList.add('err'); }
+  else { el.textContent = render(r); el.classList.remove('err'); }
+}
+document.getElementById('h-go').addEventListener('click', function(){
+  var a=[num('h-c'),num('h-l'),num('h-h')];
+  show('h-out', StoolMath.heightPlan.apply(null,a), function(r){ return StoolMath.renderHeight.apply(null,[r].concat(a)); });
+});
+document.getElementById('s-go').addEventListener('click', function(){
+  var a=[num('s-l'),num('s-p')];
+  show('s-out', StoolMath.spacePlan.apply(null,a), function(r){ return StoolMath.renderSpace.apply(null,[r].concat(a)); });
+});
+document.getElementById('f-go').addEventListener('click', function(){
+  var a=[num('f-s'),num('f-d')];
+  show('f-out', StoolMath.footPlan.apply(null,a), function(r){ return StoolMath.renderFoot.apply(null,[r].concat(a)); });
+});
+</script>
+</body>
+</html>
